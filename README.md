@@ -1,4 +1,4 @@
-# medicalApp-PHP
+# medicalApp-PHP - Bianca Blebea (Morar)
 
 - Documentation folder include details about how application works
 - sql_scripts folder include all scripts used to create necessary tables
