@@ -24,7 +24,7 @@ class PatientController
         }
 
         $patientInstance->setSelectedPatient($params["idPatient"], $params["firstName"], $params["lastName"], $params["cnp"], $params["telephone"], $params["address"]);
-        include(__DIR__ . "\..\htmls\patienteditpage.phtml");
+        include(__DIR__ . '\..\views\patienteditpage.phtml');
         // /patient/edit
     }
 
@@ -32,7 +32,7 @@ class PatientController
         if((isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) || !$_SESSION['isActive']){
             header('Location: /');
         }
-        include(__DIR__ . "\..\htmls\patientaddpage.phtml");
+        include(__DIR__ . '\..\views\patientaddpage.phtml');
     }
 
     public function patientEditSaveAction(array $params, array $query) {

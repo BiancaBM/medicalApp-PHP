@@ -50,7 +50,7 @@ class UserController
         $interventionInstance = new InterventionService($this->pdo);
         $interventionInstance->getInterventions();
 
-            include(__DIR__ . "\..\htmls\adminpage.phtml");
+            include(__DIR__ . '\..\views\adminpage.phtml');
        // /admin
     }
 
@@ -70,12 +70,12 @@ class UserController
         $appointmentsInstance = new AppointmentService($this->pdo);
         $appointmentsInstance->getAppointments();
 
-        include(__DIR__ . "\..\htmls\doctorpage.phtml");
+        include(__DIR__ . '\..\views\doctorpage.phtml');
         // /doctor
     }
 
     public function userEditAction(array $params, array $query) {
-         include(__DIR__ . "\..\htmls\usereditpage.phtml");
+         include(__DIR__ . '\..\views\usereditpage.phtml');
         // /user/edit
     }
 

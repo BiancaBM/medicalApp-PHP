@@ -19,7 +19,7 @@ class LoginController
         $this->pdo = $databaseConnectionInstance->CreateDatabaseConnection();
     }
     public function loginPageAction(array $params, array $query) {
-        include(__DIR__ . "\..\htmls\loginpage.phtml");
+        include(__DIR__ . '\..\views\loginpage.phtml');
         // /login
     }
 

@@ -18,7 +18,7 @@ class RegisterController
     }
     
     public function registerPageAction(array $params, array $query) {
-        include(__DIR__ . "\..\htmls\signuppage.phtml");
+        include(__DIR__ . '\..\views\signuppage.phtml');
         // /register
     }
 

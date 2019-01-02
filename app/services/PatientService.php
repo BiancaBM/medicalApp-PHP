@@ -38,6 +38,12 @@ class PatientService {
             header('Location: /notfound');
             return false;
         }
+
+        if($this->existAppointmentRelatedToPatient($patientId)) {
+            $_SESSION["generalMsg"] = 'Imposible to remove patient '.$patientName.'! First remove appointments related to this patient!';
+            header('Location: /user');
+            return false;
+        }
         
         $sql="DELETE FROM patients WHERE idPatient=(?)";
         $stmt = $this->pdo->prepare($sql);
@@ -50,6 +56,21 @@ class PatientService {
             $_SESSION["generalMsg"] = 'Patient '.$patientName.' was successfully removed!';
             header('Location: /');
         }
+    }
+
+    function existAppointmentRelatedToPatient(string $idPatient) {
+        $sql="SELECT * FROM appointments WHERE idPatient=(?)";
+        $stmt = $this->pdo->prepare($sql);
+        $status = $stmt->execute([$idPatient]);
+
+        if($status === false) {
+            trigger_error($stmt->error, E_USER_ERROR);
+            return true;
+        } else if(count($stmt->fetchAll()) > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     function setSelectedPatient(string $idPatient = null, string $firstName = null, string $lastName = null, string $cnp = null, string $telephone = null, string $address = null)

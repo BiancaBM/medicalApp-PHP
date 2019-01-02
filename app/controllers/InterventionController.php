@@ -22,7 +22,7 @@ class InterventionController
             header('Location: /');
         }
 
-        include(__DIR__ . "\..\htmls\interventionaddpage.phtml");
+        include(__DIR__ . '\..\views\interventionaddpage.phtml');
     }
 
     public function interventionAddSaveAction(array $params, array $query) {

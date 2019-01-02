@@ -27,7 +27,7 @@ class AppointmentController
         $interventionInstance = new InterventionService($this->pdo);
         $interventionInstance->getInterventions();
 
-        include(__DIR__ . "\..\htmls\appointmentaddpage.phtml");
+        include(__DIR__ . '\..\views\appointmentaddpage.phtml');
     }
 
     public function appointmentAddSaveAction(array $params, array $query) {
