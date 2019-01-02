@@ -1,0 +1,192 @@
+<html lang="en">
+
+<script src="/js/jquery.min.js"></script>
+<link href="/css/bootstrap.min.css" id="bootstrap-css" rel="stylesheet" type="text/css">
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/pooper.min.js"></script>
+<link href="/css/index.css" id="index-css" rel="stylesheet" type="text/css">
+<script src="/js/index.js"></script>
+<script src="/js/datatables.min.js"></script>
+<link href="/css/datatables.min.css" rel="stylesheet" type="text/css">
+<script>
+	/* initialize datatable for patients and appointments */
+	$(document).ready(function() {
+		$('#patients').DataTable({
+			"lengthMenu": [5, 10, 15],
+			"pageLength": 5
+			} );
+	
+		$('#appointments').DataTable({
+			"lengthMenu": [5, 10, 15],
+			"pageLength": 5
+			});
+	});
+</script>
+<div class="top-bar">
+	<div class="row">
+        <div class="col-md-6">
+            <label class="white float-left">Hello doctor, <?=$_SESSION["lastName"]?> <?=$_SESSION["firstName"]?> <i>(<?=$_SESSION["username"]?>)</i></label>
+            <label 
+                class="<?=$_SESSION["isActive"] ? "lightgreen" : "red"?> float-left ml-2"
+                title="<?=$_SESSION["isActive"] ? "Your account is active!" : "An administrator need to activate your account!"?>"
+                ><?=$_SESSION["isActive"] ? "Active" : "Inactive"?></label>
+        </div>
+
+		<div class="col-md-6  d-flex justify-content-end">
+			<?php if($_SESSION["isActive"]) { ?>
+				<form id="addpatient-form" action="/patient/add" method="post" role="form" class="float-right">
+					<button type="submit" name="addpatient-submit" id="addpatient-submit" class="form-control btn btn-primary btn-sm">Add patient</button>
+				</form>
+				<form id="addapointment-form" action="/appointment/add" method="post" role="form" class="float-right ml-2">
+					<button type="submit" name="addapointment-submit" id="addapointment-submit" class="form-control btn btn-primary btn-sm">Add appointment</button>
+				</form>
+			<?php }  ?>
+            <form id="edit-form" action="/user/edit" method="post" role="form" class="float-right ml-2">
+				<button type="submit" name="edit-submit" id="edit-submit" class="form-control btn btn-primary btn-sm">Edit profile</button>
+			</form>
+            <form id="logOut-form" action="/logout" method="post" role="form" class="float-right ml-2">
+				<button type="submit" name="logOut-submit" id="logOut-submit" class="form-control btn btn-danger btn-sm">Log Out</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<?php if(!$_SESSION["isActive"]) { ?>
+			<h5 class="red">An administrator need to activate your account!</h5>
+		<?php } else { ?>
+			<div class="col-md-12">
+				<div id="accordion">
+					<div class="card">
+						<div class="card-header" id="headingOne">
+						<h5 class="mb-0">
+							<button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+							Your patients
+							</button>
+						</h5>
+						</div>
+
+						<div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+						<div class="card-body">
+							<table id="patients" class="table table-bordered table-hover">
+								<thead>
+									<tr>
+									<th class="align-middle" scope="col">Last Name</th>
+									<th class="align-middle" scope="col">First Name</th>
+									<th class="align-middle" scope="col">CNP</th>
+									<th class="align-middle" scope="col">Telephone</th>
+									<th class="align-middle" scope="col">Address</th>
+									<th class="align-middle" scope="col">Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+									$patients = [];
+									if(isset($_SESSION["patients"])) {
+										$patients = $_SESSION["patients"];
+									}
+
+									foreach ($patients as &$patient) {
+								?>
+									<tr>
+										<td class="align-middle"><?=$patient["lastName"]?></td>
+										<td class="align-middle"><?=$patient["firstName"]?></td>
+										<td class="align-middle"><?=$patient["CNP"]?></td>
+										<td class="align-middle"><?=$patient["telephone"]?></td>
+										<td class="align-middle"><?=$patient["address"]?></td>
+										<td class="align-middle">
+											<form id="editpatient-form" action="/patient/edit" method="post" role="form" class="m-0 mb-2">
+												<input type="text" name="idPatient" hidden value="<?=$patient["idPatient"]?>">
+												<input type="text" name="firstName" hidden value="<?=$patient["firstName"]?>">
+												<input type="text" name="lastName" hidden value="<?=$patient["lastName"]?>">
+												<input type="text" name="telephone" hidden value="<?=$patient["telephone"]?>">
+												<input type="text" name="address" hidden value="<?=$patient["address"]?>">
+												<input type="text" name="cnp" hidden value="<?=$patient["CNP"]?>">
+												<button type="submit" name="editpatient-submit" id="status-submit" class="form-control btn btn-primary btn-sm">Edit</button>
+											</form>
+											<form id="removepatient-form" action="/patient/remove" method="post" role="form" class="m-0">
+												<input type="text" name="idPatient" hidden value="<?=$patient["idPatient"]?>">
+												<input type="text" name="fullName" hidden value="<?=$patient["lastName"].' '.$patient["firstName"]?>">
+												<button type="submit" name="removepatient-submit" id="status-submit" class="form-control btn btn-danger btn-sm">Remove</button>
+											</form>
+										</td>
+									</tr>
+								<?php } ?>
+								</tbody>
+							</table>
+							</div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header" id="headingTwo">
+						<h5 class="mb-0">
+							<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+							Your appointments
+							</button>
+						</h5>
+						</div>
+						<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+						<div class="card-body">
+						<table id="appointments" class="table table-bordered table-hover">
+								<thead>
+									<tr>
+									<th class="align-middle" scope="col">Start Date</th>
+									<th class="align-middle" scope="col">End Date</th>
+									<th class="align-middle" scope="col">Pacient Name</th>
+									<th class="align-middle" scope="col">Pacient CNP</th>
+									<th class="align-middle" scope="col">Interventions</th>
+									<th class="align-middle" scope="col">Total price</th>
+									<th class="align-middle" scope="col">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+									$appointments = [];
+									if(isset($_SESSION["appointments"])) {
+										$appointments = $_SESSION["appointments"];
+									}
+
+									foreach ($appointments as &$appointment) {
+								?>
+									<tr>
+										<td class="align-middle"><?=$appointment["startDate"]?></td>
+										<td class="align-middle"><?=$appointment["endDate"]?></td>
+										<td class="align-middle"><?=$appointment["patientFullName"]?></td>
+										<td class="align-middle"><?=$appointment["patientCnp"]?></td>
+										<td class="align-middle">
+										<?php foreach ($appointment["interventions"] as &$intervention) { ?>
+											<div>
+												<label class="font-weight-bold"><?=$intervention["name"]?>: </label>
+												<label><?=$intervention["price"]?></label>
+											<div>
+										<?php } ?>
+										</td>
+										<td class="align-middle"><?=$appointment["totalPrice"]?></td>
+										<td class="align-middle">
+											<form id="removeappointment-form" action="/appointment/remove" method="post" role="form" class="m-0">
+												<input type="text" name="idAppointment" hidden value="<?=$appointment["idAppointment"]?>">
+												<button type="submit" name="removeappointment-submit" id="status-submit" class="form-control btn btn-danger btn-sm">Remove</button>
+											</form>
+										</td>
+									</tr>
+								<?php } ?>
+								</tbody>
+							</table>
+						</div>
+						</div>
+					</div>
+				</div>
+			<label class="red col-md-12">
+				<?php 
+					if(isset($_SESSION["generalMsg"])) {
+						echo $_SESSION["generalMsg"];
+						unset($_SESSION['generalMsg']);
+					} 
+				?>
+			</label>
+		<?php } ?>
+		</div>
+	</div>
+</div>
+</html>

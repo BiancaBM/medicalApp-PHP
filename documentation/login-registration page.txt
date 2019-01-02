@@ -1,0 +1,6 @@
+1. Login
+- a message will appear if the inserter password/username are wrong 
+
+2. Registration
+- all field are required
+- an error message will appear if already exist a user with same username or CNP

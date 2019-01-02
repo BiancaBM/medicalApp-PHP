@@ -1,0 +1,46 @@
+create table appointments(
+   idAppointment INT(100) NOT NULL AUTO_INCREMENT,
+   startDate DATETIME NOT NULL,
+   endDate DATETIME NOT NULL,
+   idPatient int(100) NOT NULL,
+   idUser int(100) NOT NULL,
+   PRIMARY KEY ( idAppointment )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+create table appinterv(
+   idAppInterv INT(100) NOT NULL AUTO_INCREMENT,
+   idAppointment int(100) NOT NULL,
+   idIntervention int(100) NOT NULL,
+   PRIMARY KEY ( idAppInterv )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE interventions (
+ idIntervention int(100) NOT NULL AUTO_INCREMENT,
+ name varchar(50) NOT NULL,
+ price double NOT NULL,
+ PRIMARY KEY (idIntervention)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE patients (
+ idPatient int(100) NOT NULL AUTO_INCREMENT,
+ idUser int(100) NOT NULL,
+ firstName varchar(50) NULL,
+ lastName varchar(50) NULL,
+ CNP varchar(13) NOT NULL,
+ telephone varchar(10) NULL,
+ address varchar(100) NULL,
+ PRIMARY KEY (idPatient)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE users (
+ idUser int(100) NOT NULL AUTO_INCREMENT,
+ firstName varchar(50) NULL,
+ lastName varchar(50) NULL,
+ CNP varchar(13) NULL,
+ telephone varchar(10) NULL,
+ username varchar(50) NOT NULL,
+ password varchar(256) NOT NULL,
+ isAdmin tinyint(1) NOT NULL DEFAULT '0',
+ isActive tinyint(1) NOT NULL DEFAULT '0',
+ PRIMARY KEY (`idUser`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

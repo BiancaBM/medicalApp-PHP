@@ -1,0 +1,26 @@
+.top-bar {
+	background-color: #001a4d;
+	padding: 10px;
+	margin-bottom: 20px;
+}
+
+.top-bar form {
+	margin: 0;
+	display: flex;
+}
+
+.green {
+	color: green;
+}
+
+.red {
+	color: red;
+}
+
+.white {
+	color: white;
+}
+
+.lightgreen {
+	color: greenyellow;
+}

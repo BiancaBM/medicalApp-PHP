@@ -1,0 +1,9 @@
+1. can activate/deactivate doctors
+2. can add interventions
+- all field required
+3. can remove interventions if wasn't used by doctors
+- if not an error message appear
+
+4. can edit his own profile
+- all required field will be read only: cnp, status, username
+- other fields are not required

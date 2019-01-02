@@ -1,0 +1,60 @@
+<html lang="en">
+
+<script src="/js/jquery.min.js"></script>
+<link href="/css/bootstrap.min.css" id="bootstrap-css" rel="stylesheet" type="text/css">
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/pooper.min.js"></script>
+<link href="/css/index.css" id="index-css" rel="stylesheet" type="text/css">
+<script src="/js/index.js"></script>
+
+<div class="top-bar">
+	<div class="row">
+		<div class="col-md-12">
+			<form id="logOut-form" action="/logout" method="post" role="form" class="float-right ml-2">
+				<button type="submit" name="logOut-submit" id="logOut-submit" class="form-control btn btn-danger btn-sm">Log Out</button>
+			</form>
+			<form id="back-form" action="/user" method="post" role="form" class="float-right">
+				<button type="submit" name="back-submit" id="back-submit" class="form-control btn btn-secondary btn-sm">Back</button>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<form id="addpatient-form" action="/patient/add/save" method="post" role="form" class="col-md-12">
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="patientfirstName">First Name</label>
+					<input type="text" name="firstName" id="patientfirstName" tabindex="1" class="form-control" placeholder="First Name" value="<?php if(isset($_SESSION['addedPatient'])) echo $_SESSION['addedPatient']['firstName'] ?>" required>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="patientLastName">Last Name</label>
+					<input type="text" name="lastName" id="patientLastName" tabindex="2" class="form-control" placeholder="Last Name" value="<?php if(isset($_SESSION['addedPatient'])) echo $_SESSION['addedPatient']['lastName'] ?>" required>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="patientCnp">CNP</label>
+					<input type="text" name="cnp" id="patientCnp" tabindex="3" class="form-control" placeholder="CNP" pattern="\d{13}" maxlength="13" value="<?php if(isset($_SESSION['addedPatient'])) echo $_SESSION['addedPatient']['cnp'] ?>" required>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="patientTelephone">Phone (10 digits)</label>
+					<input type="text" name="telephone" id="patientTelephone" tabindex="4" class="form-control" placeholder="Phone" pattern="\d{10}" maxlength="10" value="<?php if(isset($_SESSION['addedPatient'])) echo $_SESSION['addedPatient']['telephone'] ?>" required>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="patientAddress">Address</label>
+					<input type="textarea" name="address" id="patientAddress" tabindex="5" class="form-control" placeholder="Address" value="<?php if(isset($_SESSION['addedPatient'])) echo $_SESSION['addedPatient']['address'] ?>">
+				</div>
+				<div class="form-group col-md-12">
+					<button type="submit" name="addpatient-submit" id="addpatient-submit" tabindex="6" class="form-control btn btn-outline-primary btn-sm">Add</button>
+				</div>
+			</div>
+		</form>
+		<label class="red">
+			<?php if(isset($_SESSION["generalMsg"])) {
+				echo $_SESSION["generalMsg"];
+				unset($_SESSION['generalMsg']);} 
+			?>
+		</label>
+	</div>
+</div>
+
+</html>

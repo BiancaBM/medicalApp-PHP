@@ -1,0 +1,163 @@
+<html lang="en">
+
+<script src="/js/jquery.min.js"></script>
+<link href="/css/bootstrap.min.css" id="bootstrap-css" rel="stylesheet" type="text/css">
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/pooper.min.js"></script>
+<link href="/css/index.css" id="index-css" rel="stylesheet" type="text/css">
+<script src="/js/index.js"></script>
+<script src="/js/datatables.min.js"></script>
+<link href="/css/datatables.min.css" rel="stylesheet" type="text/css">
+<script>
+	/* initialize datatable for patients and appointments */
+	$(document).ready(function() {
+		$('#doctors').DataTable({
+			"lengthMenu": [5, 10, 15],
+			"pageLength": 5
+			} );
+	
+		$('#interventions').DataTable({
+			"lengthMenu": [5, 10, 15],
+			"pageLength": 5
+			});
+	});
+</script>
+<div class="top-bar">
+	<div class="row">
+        <div class="col-md-6">
+            <label class="white float-left">Hello doctor, <?=$_SESSION["lastName"]?> <?=$_SESSION["firstName"]?> <i>(<?=$_SESSION["username"]?>)</i></label>
+            <label 
+                class="<?=$_SESSION["isActive"] ? "lightgreen" : "red"?> float-left ml-2"
+                title="<?=$_SESSION["isActive"] ? "Your account is active!" : "An administrator need to activate your account!"?>"
+                ><?=$_SESSION["isActive"] ? "Active" : "Inactive"?></label>
+        </div>
+
+		<div class="col-md-6  d-flex justify-content-end">
+			<form id="addintervention-form" action="/intervention/add" method="post" role="form" class="float-right">
+					<button type="submit" name="addintervention-submit" id="addintervention-submit" class="form-control btn btn-primary btn-sm">Add intervention</button>
+				</form>
+            <form id="logOut-form" action="/user/edit" method="post" role="form" class="float-right ml-2">
+				<button type="submit" name="edit-submit" id="edit-submit" class="form-control btn btn-primary btn-sm">Edit profile</button>
+			</form>
+            <form id="logOut-form" action="/logout" method="post" role="form" class="float-right ml-2">
+				<button type="submit" name="logOut-submit" id="logOut-submit" class="form-control btn btn-danger btn-sm">Log Out</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+    	<div class="row">
+			<div class="col-md-12">
+				<div id="accordion">
+					<div class="card">
+						<div class="card-header" id="headingOne">
+						<h5 class="mb-0">
+							<button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+								The list of doctors from your clinic
+							</button>
+						</h5>
+						</div>
+
+						<div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+						<div class="card-body">
+							<table id="doctors" class="table table-bordered table-hover">
+								<thead>
+									<tr>
+									<th scope="col">Username</th>
+									<th scope="col">Last Name</th>
+									<th scope="col">First Name</th>
+									<th scope="col">CNP</th>
+									<th scope="col">Telephone</th>
+									<th scope="col">Status</th>
+									<th scope="col">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+									$doctors = [];
+									if(isset($_SESSION["doctors"])) {
+										$doctors = $_SESSION["doctors"];
+									}
+
+									foreach ($doctors as &$doctor) {
+								?>
+									<tr>
+										<th scope="row"><?=$doctor["username"]?></th>
+										<td><?=$doctor["lastName"]?></td>
+										<td><?=$doctor["firstName"]?></td>
+										<td><?=$doctor["CNP"]?></td>
+										<td><?=$doctor["telephone"]?></td>
+										<td><?=$doctor["isActive"] ? "Active" : "Inactive"?></td>
+										<td>
+										<form id="status-form" action="/user/status" method="post" role="form" class="m-0">
+											<input type="text" name="idUser" hidden value="<?=$doctor["idUser"]?>">
+											<input type="text" name="isActive" hidden value="<?=!$doctor["isActive"]?>">
+											<button type="submit" name="status-submit" id="status-submit" 
+											class="form-control btn <?=$doctor["isActive"] ? "btn-danger" : "btn-primary" ?> btn-sm"><?=$doctor["isActive"] ? "Deactivate" : "Activate" ?></button>
+										</form>
+										</td>
+									</tr>
+								<?php } ?>
+								</tbody>
+							</table>
+						</div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header" id="headingTwo">
+						<h5 class="mb-0">
+							<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+							Interventions
+							</button>
+						</h5>
+						</div>
+						<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+						<div class="card-body">
+							<table id="interventions" class="table table-bordered table-hover">
+									<thead>
+										<tr>
+										<th scope="col">Name</th>
+										<th scope="col">Price</th>
+										<th scope="col">Action</th>
+										</tr>
+									</thead>
+									<tbody>
+									<?php
+										$interventions = [];
+										if(isset($_SESSION["interventions"])) {
+											$interventions = $_SESSION["interventions"];
+										}
+
+										foreach ($interventions as &$intervention) {
+									?>
+										<tr>
+											<th><?=$intervention["name"]?></th>
+											<td><?=$intervention["price"]?></td>
+											<td>
+											<form id="remove-form" action="/intervention/remove" method="post" role="form" class="m-0">
+												<input type="text" name="idIntervention" hidden value="<?=$intervention["idIntervention"]?>">
+												<button type="submit" name="remove-submit" id="remove-submit" 
+												class="form-control btn btn-danger btn-sm">Remove</button>
+											</form>
+											</td>
+										</tr>
+									<?php } ?>
+									</tbody>
+								</table>
+						</div>
+						</div>
+					</div>
+				</div>
+				<label class="red col-md-12">
+				<?php 
+					if(isset($_SESSION["generalMsg"])) {
+						echo $_SESSION["generalMsg"];
+						unset($_SESSION['generalMsg']);
+					} 
+				?>
+			</label>
+			</div>
+		</div>
+	</div>
+</html>

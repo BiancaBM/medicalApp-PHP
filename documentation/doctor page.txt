@@ -1,0 +1,23 @@
+If the user is not active it can just edit his own profile.
+ELSE he:
+
+1. can add patient
+- error message appear if already exist a patient with same CNP
+- required: first name, last name, cnp, phone
+- not required: address
+
+2. can remove patient if no appointment exist for him
+
+3. can edit patient
+- cnp will be read only field
+
+4. can add appointments
+- error message appear if will exist date range conflicts
+- required: patient, startdate, enddate
+- not required: interventions
+
+5. can remove appointments
+
+6. can edit his own profile
+- all required field will be read only: cnp, status, username
+- other fields are not required
