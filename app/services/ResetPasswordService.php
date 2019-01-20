@@ -1,31 +1,26 @@
 <?php
 
-namespace App\services;
+namespace App\Services;
 
-use PDO;
+use App\Models\User;
 
 class ResetPasswordService { 
 
-    private $pdo;
-
-    function __CONSTRUCT(PDO $pdo)
+    function __CONSTRUCT()
     {
-        $this->pdo = $pdo;
     }
 
     function resetPassword(string $password = null, string $confirm_password = null)
     {
         if($password === $confirm_password && $password != null)
         {
-            $sql="UPDATE `users` SET `password` = (?) WHERE `idUser` = (?)";
-            $stmt = $this->pdo->prepare($sql);
             $password=password_hash($password,PASSWORD_DEFAULT);
-            $status = $stmt->execute([$password,$_SESSION["idUser"]]);
-            if ($status === false) {
-                trigger_error($stmt->error, E_USER_ERROR);
-            } 
-
-            $_SESSION["generalMsg"] = "Password has been reset successfully!";
+            $data = ['password' => $password];
+            $where = ['idUser' => $_SESSION["idUser"]];
+            (new User)->update($where, $data);
+            
+            $_SESSION["generalMsg"] = "Password has been reset successfully!"."___TIMESTAMP___".time();
+            $_SESSION["isErrorMessage"] = false;
             return TRUE;
         }
 

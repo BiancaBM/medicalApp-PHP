@@ -1,0 +1,34 @@
+{% set pageTitle="Add intervention" %}
+{% extends "layout.html" %}
+{% block head %}
+    {{parent()}}
+{% endblock %}
+
+{% block topbar %}
+	<form id="back-form" action="/user" method="post" role="form" class="float-right">
+		<button type="submit" name="back-submit" id="back-submit" class="form-control btn btn-secondary btn-sm">Back</button>
+	</form>
+	<form id="logOut-form" action="/logout" method="post" role="form" class="float-right ml-2">
+		<button type="submit" name="logOut-submit" id="logOut-submit" class="form-control btn btn-danger btn-sm">Log Out</button>
+	</form>
+{% endblock %}
+
+{% block content %}
+<form id="intervention-form" action="/intervention/add/save" method="post" role="form" class="col-md-12">
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label for="interventionName">Name</label>
+			<input type="text" name="name" id="interventionName" tabindex="1" class="form-control" placeholder="Intervention name" required>
+		</div>
+		<div class="form-group col-md-6">
+			<label for="interventionPrice">Price</label>
+			<input type="text" name="price"
+				title="Need to be a number with maximum 2 decimals"
+				id="interventionPrice" pattern="\d+(\.\d{1,2})?" tabindex="2" class="form-control" placeholder="Intervention price" required>
+		</div>
+		<div class="form-group col-md-12">
+			<button type="submit" name="intervention-submit" id="intervention-submit" tabindex="3" class="form-control btn btn-outline-primary btn-sm">Add</button>
+		</div>
+	</div>
+</form>
+{% endblock %}

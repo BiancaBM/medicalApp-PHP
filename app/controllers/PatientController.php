@@ -2,58 +2,55 @@
 
 namespace App\controllers;
 
-use \App\services\PatientService;
-use \App\services\DatabaseConnection;
+use \App\Models\Patient;
+use \App\Services\PatientService;
+use Framework\Controller;
 
-class PatientController
+class PatientController extends Controller
 {
-    private $pdo;
-
-    function __CONSTRUCT()
+    private $patientInstance;
+    function __construct()
     {   
-        session_start();
+        parent::__construct();
+        $this->patientInstance = new PatientService();
         if(!isset($_SESSION["username"])) header("Location: /");
-        $databaseConnectionInstance = new DatabaseConnection(); 
-        $this->pdo = $databaseConnectionInstance->CreateDatabaseConnection();
     }
     
-    public function patientEditPageAction(array $params, array $query) {
-        $patientInstance = new PatientService($this->pdo);
-        if(isset($_SESSION["selectedPatient"])) {
+    public function patientEditPageAction($params) {
+        if($params['idPatient'] == null) {
             header('Location: /');
         }
 
-        $patientInstance->setSelectedPatient($params["idPatient"], $params["firstName"], $params["lastName"], $params["cnp"], $params["telephone"], $params["address"]);
-        include(__DIR__ . '\..\views\patienteditpage.phtml');
+        $patient = (new Patient)->getBy('idPatient', $params['idPatient']);
+        
+        return $this->view('patienteditpage.html', ['patient' => $patient]);
         // /patient/edit
     }
 
-    public function patientAddPageAction(array $params, array $query) {
+    public function patientAddPageAction() {
         if((isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) || !$_SESSION['isActive']){
             header('Location: /');
         }
-        include(__DIR__ . '\..\views\patientaddpage.phtml');
+
+        return $this->view('patientaddpage.html');
     }
 
-    public function patientEditSaveAction(array $params, array $query) {
-        $patientInstance = new PatientService($this->pdo);
-        $patientInstance->editPatient($_SESSION["selectedPatient"]["idPatient"], $params["firstName"], $params["lastName"], $params["telephone"], $params["address"]);
+    public function patientEditSaveAction(array $params) {
+        $this->patientInstance->editPatient($params["idPatient"], $params["firstName"], $params["lastName"], $params["telephone"], $params["address"]);
         header('Location: /user');
     }
 
-    public function patientRemoveAction(array $params, array $query) {
-        $patientInstance = new PatientService($this->pdo);
-        $patientInstance->removePatient($params["idPatient"], $params["fullName"]);
+    public function patientRemoveAction(array $params) {
+        $this->patientInstance->removePatient($params["idPatient"], $params["fullName"]);
         // /patient/remove
     }
 
-    public function patientAddSaveAction(array $params, array $query) {
-        $patientInstance = new PatientService($this->pdo);
+    public function patientAddSaveAction(array $params) {
         if(!isset($_SESSION["idUser"]) || (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) || (isset($_SESSION["isActive"]) && !$_SESSION['isActive'])) {
             header('Location: /notfound');
         }
 
-        $added = $patientInstance->addPatient($params["firstName"], $params["lastName"], $params["cnp"], $params["telephone"], $params["address"]);
+        $added = $this->patientInstance->addPatient($params["firstName"], $params["lastName"], $params["cnp"], $params["telephone"], $params["address"]);
 
         if($added){
             unset($_SESSION['addedPatient']);

@@ -24,3 +24,10 @@
 .lightgreen {
 	color: greenyellow;
 }
+
+#generalMsg {
+	display: none;
+}
+
+
+

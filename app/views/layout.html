@@ -1,0 +1,57 @@
+<html>
+    <head>
+        {% block head %}
+        
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <link href="/css/bootstrap.min.css" id="bootstrap-css" rel="stylesheet" type="text/css">
+        <script src="/js/bootstrap.min.js"></script>
+        <script src="/js/pooper.min.js"></script>
+        <link href="/css/index.css" id="index-css" rel="stylesheet" type="text/css">
+        <script src="/js/index.js"></script>
+        <script src="/js/datatables.min.js"></script>
+        <link href="/css/datatables.min.css" rel="stylesheet" type="text/css">
+        <title>{{pageTitle}}</title>
+         {% if session.generalMsg %}
+            <script>
+                    $(function() {
+                        const previousMsg = localStorage.getItem('previousMsg');
+                        const generalMsg = "{{session.generalMsg}}";
+                        console.log('p: ', previousMsg, '___s: ', generalMsg);
+
+                       if(!previousMsg || previousMsg != generalMsg || !generalMsg) {
+                            $('#generalMsg').html(generalMsg.split('___TIMESTAMP___')[0]);
+                            $('#generalMsg').show(300).delay(2500).hide(300);
+                       }
+                       else $('#generalMsg').hide();
+
+                        localStorage.setItem("previousMsg", "{{session.generalMsg}}");
+                    });
+            </script>  
+        {% endif %}
+        {% endblock %}
+    </head>
+    <body>
+        <div class="top-bar">
+            <div class="row">
+                {% if session.username %}
+                <div class="col-md">
+                    <label class="white float-left">Hello {{session.lastName}} {{session.firstName}} <i>({{session.username}})</i></label>
+                    <label 
+                        class="{{session["isActive"] ? "lightgreen" : "red"}} float-left ml-2"
+                        title="{{session["isActive"] ? "Your account is active!" : "An administrator need to activate your account!"}}"
+                        >{{session["isActive"] ? "Active" : "Inactive"}}</label>
+                </div>
+                {% endif %}
+                <div class="col-md d-flex justify-content-end">
+                    {% block topbar %}Default topbar content{% endblock %}
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div id="generalMsg" class="col-md-12 alert {% if session.isErrorMessage %} alert-danger {% else %} alert-success {% endif %}"></div>
+                {% block content %}Default content{% endblock %}
+            </div>
+        </div>
+    </body>
+</html>

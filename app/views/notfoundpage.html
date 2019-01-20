@@ -1,0 +1,12 @@
+{% set pageTitle="Error" %}
+{% extends "layout.html" %}
+{% block head %}
+    {{parent()}}
+{% endblock %}
+
+{% block content %} 
+	<div class="col-md-12 d-flex flex-column align-items-center">
+		<h1 class="red">404 NOT FOUND</h1>
+		<h4>You are not authorized to view this page or this page don't exist!</h4>
+	</div>
+{% endblock %}

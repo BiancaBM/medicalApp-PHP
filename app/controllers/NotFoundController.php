@@ -1,11 +1,11 @@
 <?php
 
 namespace App\controllers;
+use Framework\Controller;
 
-class NotFoundController
+class NotFoundController extends Controller
 {
-    public function notFoundPageAction(array $params, array $query) {
-        include(__DIR__ . '\..\views\notfoundpage.phtml');
-        // /login
+    public function notFoundPageAction() {
+        return $this->view('notfoundpage.html');
     }
 }

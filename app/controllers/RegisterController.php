@@ -2,34 +2,32 @@
 
 namespace App\controllers;
 
-use \App\services\RegisterService;
-use \App\services\DatabaseConnection;
+use Framework\Controller;
+use App\Services\RegisterService;
 
-class RegisterController
+class RegisterController extends Controller
 {
-    private $pdo;
 
-    function __CONSTRUCT()
+    function __construct()
     {   
-        session_start();
+        parent::__construct();
         if(isset($_SESSION["username"])) header("Location: /");
-        $databaseConnectionInstance = new DatabaseConnection(); 
-        $this->pdo = $databaseConnectionInstance->CreateDatabaseConnection();
     }
     
-    public function registerPageAction(array $params, array $query) {
-        include(__DIR__ . '\..\views\signuppage.phtml');
+    public function registerPageAction() {
+        return $this->view('signuppage.html');
         // /register
     }
 
-    public function registerNowAction(array $params, array $query) {
-        $registerInstance = new RegisterService($params["username"],$params["password"],$params["cnp"],$this->pdo);
+    public function registerNowAction(array $params) {
+        $registerInstance = new RegisterService($params["username"],$params["password"],$params["cnp"]);
         if($registerInstance->registerUserInDb()) {
             $registerInstance->callAutoLogin();
         }
         else{
             session_start();
-            $_SESSION["generalMsg"] = "This username/CNP is already used!";
+            $_SESSION["generalMsg"] = "This username/CNP is already used!"."___TIMESTAMP___".time();
+            $_SESSION["isErrorMessage"] = true;
             header("Location: /register");
         }
         // /register

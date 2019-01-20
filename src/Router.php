@@ -4,51 +4,86 @@ namespace Framework;
 
 class Router
 {
-    public function route(array $static_routes, string $url, string $query) {
-        //die('<script>alert('.$url.')</script>');
-
-        $this->getControllerName($static_routes, $controller, $action, $paramNames);
-        $split_query = null;
-
-        // remove the query string from the URL and make sure the link ends with a slash
-        if (isset($url)) {
-            $url = preg_replace('/\?.*/', '', $url);
-            $url = rtrim($url, '/') . '/';
-        }
-
-        // split the query string into an array
-        if (isset($query)) {
-            parse_str($query, $split_query);
-        }
-
+    public function route(array $static_routes, string $url) {
         // static route assignment
-        if (isset($static_routes[$url])) {
-            $this->getControllerName($static_routes, $controller, $action, $paramNames,$url);
-        }
+        $url = rtrim($url, '/').'/';
+        $this->getControllerName($static_routes, $controller, $action, $paramNames, $dynamicUrl, $url);
 
-        $params = [];
-        foreach ($paramNames as $paramName)
-        {
-            $params[$paramName] = null;
-            if (isset($_POST[$paramName]))
-            {
-                $params[$paramName] = $_POST[$paramName];
+        if($paramNames && count($paramNames) > 0){
+            $params = [];
+            if($dynamicUrl) {
+                foreach ($paramNames as $paramName => $paramValue)
+                {
+                    $params[$paramName] = $paramValue;
+                }
+            } else {
+                foreach ($paramNames as $paramName)
+                {
+                    $params[$paramName] = null;
+                    if (isset($_POST[$paramName]))
+                    {
+                        $params[$paramName] = $_POST[$paramName];
+                    }
+                }
             }
-        }
 
-        $controller->{$action}($params, $split_query);
+            $controller->{$action}($params);
+        } else {
+            $controller->{$action}();
+        }
     }
 
-    private function getControllerName(array $routes, &$controller, &$action, &$params, string $url = null) {
+    private function getControllerName(array $routes, &$controller, &$action, &$params, &$dynamicUrl, string $url = null) {
         if (!isset($routes[$url])) {
-            $url = null;
+            if($this->matchUrl($routes, $controller, $action, $params, $url)) {
+                $dynamicUrl = true;
+                return;
+            }
+            else {
+                $url = null;
+                $dynamicUrl = false;
+            }
         }
 
         $controllerName = $routes[$url]['controller'];
         $action = $routes[$url]['action'];
-        $params = $routes[$url]['params'];
+
+        $keys = array_keys($routes[$url]);
+
+        $routeParams = in_array('params', $keys) ? $routes[$url]['params'] : null;
+        
+        $params = $routeParams && count($routeParams) > 0 ? $routeParams : null;
 
         $class = "\App\Controllers\\" . $controllerName;
         $controller = new $class();
+    }
+
+    private function matchUrl(array $routes, &$controller, &$action, &$params, string $url = null){
+        $urlSplited = explode("/",$url);
+        $url = "";
+        $id;
+
+        foreach($urlSplited as $item){
+            if(is_numeric($item)) $id = $item;
+            else if($item != "") $url.= $item.'\/';
+        }
+
+        foreach($routes as $key => $value) {
+            //check if match something like '/texthere/{someTextHere}'
+            $pattern = '/\/'.$url.'{([^\/}]+)}/';
+
+            if(preg_match($pattern, $key, $matches)) {
+                $route = $value;
+                $controllerName = $route['controller'];
+                $action = $route['action'];
+                $params = [$matches[1] => $id];
+                
+                $class = "\App\Controllers\\" . $controllerName;
+                $controller = new $class();
+
+                return true;
+            }  
+        }
+        return false;
     }
 }

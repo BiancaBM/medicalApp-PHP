@@ -1,0 +1,30 @@
+{% set pageTitle="Log In" %}
+{% extends "layout.html" %}
+{% block head %}
+    {{parent()}}
+{% endblock %}
+
+{% block topbar %}
+	<form id="login" action="/login" method="post" role="form" class="float-right">
+		<button type="submit" name="login" id="login-btn" class="form-control btn btn-light btn-sm">Login</button>
+	</form>
+	<form id="register" action="/register" method="post" role="form" class="float-right ml-2">
+		<button type="submit" name="register-submit" id="register-submit" class="form-control btn btn-light btn-sm">Register</button>
+	</form>
+{% endblock %}
+
+{% block content %} 
+<div class="col-md-12 d-flex justify-content-md-center">
+		<form id="login-form" action="/login/auth" method="post" role="form">
+			<div class="form-group">
+				<input type="text" name="username" id="authUsername" tabindex="1" class="form-control" placeholder="Username" value="">
+			</div>
+			<div class="form-group">
+				<input type="password" name="password" id="authPassword" tabindex="2" class="form-control" placeholder="Password">
+			</div>
+			<div class="form-group">
+				<button type="submit" name="login-submit" id="login-submit" tabindex="3" class="form-control btn btn-primary">Log In</button>
+			</div>
+		</form>
+</div>
+{% endblock %}

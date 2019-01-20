@@ -1,32 +1,29 @@
 <?php
 
-namespace App\services;
+namespace App\Services;
 
-use PDO;
-use \App\services\AuthService;
+use \App\Models\User;
+use \App\Services\AuthService;
 
 class RegisterService
 {
     private $username;
     private $password;
     private $cnp;
-    private $pdo;
 
-    function __CONSTRUCT(string $username, string $password, string $cnp, PDO $pdo)
+    function __CONSTRUCT(string $username, string $password, string $cnp)
     {
         $this->username = $username;
         $this->password = $password;
         $this->cnp = $cnp;
-        $this->pdo = $pdo;
     }
 
     function checkUsernameOrCnpExists()
     {
-        $sql = "SELECT * FROM users WHERE username = (?) or cnp = (?)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$this->username, $this->cnp]);
-        $result = $stmt->fetch();
-        if ($result) {
+        $usernameExist = (new User)->getBy('username', $this->username);
+        $cnpExist = (new User)->getBy('cnp', $this->cnp);
+
+        if ($usernameExist || $cnpExist) {
             return true;
         }
 
@@ -37,15 +34,15 @@ class RegisterService
     {
         if ($this->checkUsernameOrCnpExists() == false)
         {
-            $sql = "INSERT INTO `users` (password,username, cnp) VALUES(?,?,?)";
-            
             $options = [
                 'cost' => 12,
             ];
 
             $hashedPassword = password_hash($this->password, PASSWORD_BCRYPT, $options); // always 60 characters
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$hashedPassword, $this->username, $this->cnp]);
+
+            $itemToInsert = ['password' => $hashedPassword, 'username' => $this->username, 'cnp' => $this->cnp];
+            (new User)->insert($itemToInsert);
+
             return TRUE;
         }
         return FALSE;
@@ -53,7 +50,7 @@ class RegisterService
 
     function callAutoLogin()
     {
-        $authenticateInstance = new AuthService($this->username, $this->password, $this->pdo);
+        $authenticateInstance = new AuthService($this->username, $this->password);
         $authenticationResult = $authenticateInstance->authenticateUser();
         $authenticateInstance->redirectAuthenticationForm($authenticationResult);
     }

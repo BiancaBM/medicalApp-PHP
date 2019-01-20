@@ -2,35 +2,32 @@
 
 namespace App\controllers;
 
-use \App\services\AuthService;
-use \App\services\LogoutService;
-use \App\services\RegisterService;
-use \App\services\DatabaseConnection;
+use Framework\Controller;
+use App\Services\AuthService;
+use App\Services\LogoutService;
+use App\Services\RegisterService;
 
-class LoginController
+class LoginController extends Controller
 {
-    private $pdo;
-
-    function __CONSTRUCT()
+    function __construct()
     {
-        session_start();
+        parent::__construct();
         if(isset($_SESSION["username"])) header("Location: /");
-        $databaseConnectionInstance = new DatabaseConnection(); 
-        $this->pdo = $databaseConnectionInstance->CreateDatabaseConnection();
     }
-    public function loginPageAction(array $params, array $query) {
-        include(__DIR__ . '\..\views\loginpage.phtml');
+
+    public function loginPageAction() {      
+        return $this->view('loginpage.html');
         // /login
     }
 
-    public function loginAuthAction(array $params, array $query) {
-        $authenticateInstance = new AuthService($params["username"],$params["password"],$this->pdo);
+    public function loginAuthAction(array $params) {
+        $authenticateInstance = new AuthService($params["username"],$params["password"]);
         $authentificationResult = $authenticateInstance->authenticateUser();
         $authenticateInstance->redirectAuthenticationForm($authentificationResult);
         // /login/auth
     }
 
-    public function logoutAction(array $params, array $query) {
+    public function logoutAction() {
         $logOutInstance = new LogoutService();
         $logOutInstance->logout();
         // /logout

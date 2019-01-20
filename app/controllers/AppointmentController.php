@@ -2,41 +2,39 @@
 
 namespace App\controllers;
 
-use \App\services\InterventionService;
-use \App\services\AppointmentService;
-use \App\services\DatabaseConnection;
+use Framework\Controller;
+use App\Services\InterventionService;
+use App\Services\AppointmentService;
 
-class AppointmentController
+class AppointmentController extends Controller
 {
-    private $pdo;
-
-    function __CONSTRUCT()
+    private $appointmentInstance;
+    function __construct()
     {   
-        session_start();
+        parent::__construct();
+        $this->appointmentInstance = new AppointmentService();
         if(!isset($_SESSION["username"])) header("Location: /");
-        $databaseConnectionInstance = new DatabaseConnection(); 
-        $this->pdo = $databaseConnectionInstance->CreateDatabaseConnection();
     }
 
 
-    public function appointmentAddPageAction(array $params, array $query) {
+    public function appointmentAddPageAction() {
         if((isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) || !$_SESSION['isActive']){
             header('Location: /');
         }
 
-        $interventionInstance = new InterventionService($this->pdo);
+        $interventionInstance = new InterventionService();
         $interventionInstance->getInterventions();
-
-        include(__DIR__ . '\..\views\appointmentaddpage.phtml');
+        
+        $interventions = $_SESSION["interventions"];
+        return $this->view('appointmentaddpage.html', ["interventions" => $interventions]);
     }
 
-    public function appointmentAddSaveAction(array $params, array $query) {
-        $appointmentInstance = new AppointmentService($this->pdo);
+    public function appointmentAddSaveAction(array $params) {
         if(!isset($_SESSION["idUser"]) || (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) || (isset($_SESSION["isActive"]) && !$_SESSION['isActive'])) {
             header('Location: /notfound');
         }
         
-        $added = $appointmentInstance->addAppointment($params["selectedPatient"], $params["startDate"], $params["endDate"], $params["selectedInterventions"]);
+        $added = $this->appointmentInstance->addAppointment($params["selectedPatient"], $params["startDate"], $params["endDate"], $params["selectedInterventions"]);
 
         if($added){
             unset($_SESSION['addedAppointment']);
@@ -49,9 +47,8 @@ class AppointmentController
         // /appointment/add/save
     }
 
-    public function appointmentRemoveAction(array $params, array $query) {
-        $appointmentInstance = new AppointmentService($this->pdo);
-        $appointmentInstance->removeAppointment($params["idAppointment"]);
+    public function appointmentRemoveAction(array $params) {
+        $this->appointmentInstance->removeAppointment($params["idAppointment"]);
         // /appointment/remove
     }
 }

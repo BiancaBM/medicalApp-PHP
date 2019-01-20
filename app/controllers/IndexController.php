@@ -4,7 +4,7 @@ namespace App\controllers;
 
 class IndexController
 {
-    public function indexPageAction(array $params, array $query) {
+    public function indexPageAction() {
         session_start();
         if(!isset($_SESSION["username"]))
         {
@@ -14,6 +14,5 @@ class IndexController
         {
             header("Location: /user");
         }
-        // /
     }
 }

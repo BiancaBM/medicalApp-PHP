@@ -1,0 +1,49 @@
+{% set pageTitle="Add patient" %}
+{% extends "layout.html" %}
+{% block head %}
+	{{parent()}}		
+{% endblock %}
+
+
+{% block topbar %}
+	<form id="back-form" action="/user" method="post" role="form" class="float-right">
+		<button type="submit" name="back-submit" id="back-submit" class="form-control btn btn-secondary btn-sm">Back</button>
+	</form>
+	<form id="logOut-form" action="/logout" method="post" role="form" class="float-right ml-2">
+		<button type="submit" name="logOut-submit" id="logOut-submit" class="form-control btn btn-danger btn-sm">Log Out</button>
+	</form>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		<form id="addpatient-form" action="/patient/add/save" method="post" role="form" class="col-md-12">
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="patientfirstName">First Name</label>
+					<input type="text" name="firstName" id="patientfirstName" tabindex="1" class="form-control" placeholder="First Name" value="{% if session.addedPatient %}{{session.addedPatient.firstName}}{% endif %}" required>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="patientLastName">Last Name</label>
+					<input type="text" name="lastName" id="patientLastName" tabindex="2" class="form-control" placeholder="Last Name" value="{% if session.addedPatient %}{{session.addedPatient.lastName}}{% endif %}" required>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="patientCnp">CNP</label>
+					<input type="text" name="cnp" id="patientCnp" tabindex="3" class="form-control" placeholder="CNP" pattern="\d{13}" maxlength="13" value="{% if session.addedPatient %}{{session.addedPatient.cnp}}{% endif %}" required>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="patientTelephone">Phone (10 digits)</label>
+					<input type="text" name="telephone" id="patientTelephone" tabindex="4" class="form-control" placeholder="Phone" pattern="\d{10}" maxlength="10" value="{% if session.addedPatient %}{{session.addedPatient.telephone}}{% endif %}" required>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="patientAddress">Address</label>
+					<input type="textarea" name="address" id="patientAddress" tabindex="5" class="form-control" placeholder="Address" value="{% if session.addedPatient %}{{session.addedPatient.address}}{% endif %}">
+				</div>
+				<div class="form-group col-md-12">
+					<button type="submit" name="addpatient-submit" id="addpatient-submit" tabindex="6" class="form-control btn btn-outline-primary btn-sm">Add</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}

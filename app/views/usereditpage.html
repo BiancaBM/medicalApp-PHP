@@ -1,0 +1,63 @@
+
+{% set pageTitle="Edit your profile" %}
+{% extends "layout.html" %}
+{% block head %}
+    {{parent()}}
+{% endblock %}
+
+{% block topbar %}
+	<form id="back-form" action="/user" method="post" role="form" class="float-right">
+		<button type="submit" name="back-submit" id="back-submit" class="form-control btn btn-secondary btn-sm">Back</button>
+	</form>
+	<form id="logOut-form" action="/logout" method="post" role="form" class="float-right ml-2">
+		<button type="submit" name="logOut-submit" id="logOut-submit" class="form-control btn btn-danger btn-sm">Log Out</button>
+	</form>
+{% endblock %}
+
+{% block content %} 
+<form id="saveprofile-form" action="/user/save" method="post" role="form" class="col-md-12">
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label for="profileUsername">Username</label>
+			<input type="text" name="username" id="profileUsername" tabindex="1" class="form-control" placeholder="Username" readonly value={{session.username}}>
+		</div>
+		<div class="form-group col-md-6">
+			<label for="isActive">Status</label>
+			<input type="text" name="isActive" id="profileIsActive" tabindex="2" class="form-control" placeholder="Status" readonly value={{session.isActive ? "Active" : "Inactive" }}>
+		</div>
+		<div class="form-group col-md-6">
+			<label for="profileFirstname">First Name</label>
+			<input type="text" name="firstname" id="profileFirstname" tabindex="3" class="form-control" placeholder="First Name"  value={{session.firstName}}>
+		</div>
+		<div class="form-group col-md-6">
+			<label for="profileLastname">Last Name</label>
+			<input type="text" name="lastname" id="profileLastname" tabindex="4" class="form-control" placeholder="Last Name"  value={{session.lastName}}>
+		</div>
+		<div class="form-group col-md-6">
+			<label for="profileCnp">CNP</label>
+			<input type="text" name="cnp" id="profileCnp" tabindex="5" class="form-control" placeholder="CNP" pattern="\d{13}" readonly value={{session.cnp}}>
+		</div>
+		<div class="form-group col-md-6">
+			<label for="profileTelephone">Phone (10 digits)</label>
+			<input type="text" name="telephone" id="profileTelephone" tabindex="6" class="form-control" placeholder="Phone" pattern="\d{10}" maxlength="10"  value={{session.telephone}}>
+		</div>
+		<div class="form-group col-md-12">
+			<button type="submit" name="saveprofile-submit" id="saveprofile-submit" tabindex="7" class="form-control btn btn-outline-primary btn-sm">Save Profile</button>
+		</div>
+	</div>
+</form>
+
+<form id="resetPassword-form" action="/user/resetpassword" method="post" role="form" class="col-md-12">
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" tabindex="8" minlength="5" class="form-control" placeholder="Password">
+		</div>
+		<div class="form-group col-md-6">
+			<label for="confirm_password">Confirm Password</label>
+			<input type="password" name="confirm_password" id="confirm_password" tabindex="9" minlength="5" class="form-control" placeholder="Confirm password">
+		</div>
+		<button type="submit" onclick="resetPassword()" name="resetPassword-submit" id="resetPassword-submit" tabindex="10" class="form-control btn btn-outline-primary btn-sm">Reset Password</button>
+	</div>
+</form>
+{% endblock %}

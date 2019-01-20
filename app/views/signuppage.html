@@ -1,0 +1,37 @@
+{% set pageTitle="Register" %}
+{% extends "layout.html" %}
+{% block head %}
+    {{parent()}}
+{% endblock %}
+
+{% block topbar %}
+	<form id="login" action="/login" method="post" role="form" class="float-right">
+		<button type="submit" name="login-submit" id="login-submit" class="form-control btn btn-light btn-sm">Login</button>
+	</form>
+	<form id="register" action="/register" method="post" role="form" class="float-right ml-2">
+		<button type="submit" name="register-submit" id="register-submit" class="form-control btn btn-light btn-sm">Register</button>
+	</form>
+{% endblock %}
+
+{% block content %} 
+<div class="container">
+	<div class="row justify-content-md-center">
+		<div class="col-md-6">
+			<form id="register-now-form" action="/register/now" method="post" role="form">
+				<div class="form-group">
+					<input type="text" name="username" id="registerUsername" tabindex="1" class="form-control" placeholder="Username" required>
+				</div>
+				<div class="form-group">
+					<input type="text" name="cnp" id="registerCnp" tabindex="2" pattern="\d{13}" maxlength="13" class="form-control" placeholder="CNP" required>
+				</div>
+				<div class="form-group">
+					<input type="password" name="password" id="registerPassword" tabindex="3" minlength="6" class="form-control" placeholder="Password" required>
+				</div>
+				<div class="form-group">
+					<button type="submit" name="register-now-submit" id="register-now-submit" tabindex="4" class="form-control btn btn-primary">Register Now</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %} 

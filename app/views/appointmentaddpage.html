@@ -1,0 +1,54 @@
+{% set pageTitle="Appointment" %}
+{% extends "layout.html" %}
+{% block head %}
+	{{parent()}}		
+{% endblock %}
+
+{% block topbar %}
+	<form id="back-form" action="/user" method="post" role="form" class="float-right">
+		<button type="submit" name="back-submit" id="back-submit" class="form-control btn btn-secondary btn-sm">Back</button>
+	</form>
+	<form id="logOut-form" action="/logout" method="post" role="form" class="float-right ml-2">
+		<button type="submit" name="logOut-submit" id="logOut-submit" class="form-control btn btn-danger btn-sm">Log Out</button>
+	</form>
+{% endblock %}
+
+			
+{% block content %}
+<div class="container">
+	<div class="row">
+		<form id="addappointment-form" action="/appointment/add/save" method="post" role="form" class="col-md-12">
+			<div class="form-row">
+				<div class="form-group col-md-12">
+				<label for="selectedPatient">Patient</label>
+				<select class="form-control" name="selectedPatient" id="patientSelector" required tabindex="1">
+					<option {% if not session.addedAppointment %} selected {% endif %} value="">Select a patient...</option>
+					{% for option in session.patients %}
+						<option {% if session.addedAppointment.selectedPatient == option.idPatient %} selected {% endif %} value="{{option.idPatient}}">{{"#{option.lastName} #{option.firstName} | CNP: #{option.CNP}"}}</option>
+					{% endfor %}
+				</select>
+				</div>
+				<div class="col-md-6">
+					<label for="appointmentStartDate">Start Date</label>
+					<input type="datetime-local" name="startDate" id="appointmentStartDate" onchange="appointmentStartDateChanged()" tabindex="2" class="form-control" required>
+				</div>
+				<div class="col-md-6">
+					<label for="appointmentEndDate">End Date</label>
+					<input type="datetime-local" name="endDate" id="appointmentEndDate" tabindex="3" class="form-control" disabled required>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="selectedInterventions" class="d-block">Interventions:</label>
+					{% for intervention in interventions %}
+						<input {% if session.addedAppointment and intervention.idIntervention in session.addedAppointment.selectedInterventions|keys %} checked {% endif %} type="checkbox" name="selectedInterventions[{{intervention.idIntervention}}]" value="{{intervention.idIntervention}}"> {{"#{intervention.name} - #{intervention.price}"}}<br>
+					{% endfor %}
+				</div>
+				
+				<div class="form-group col-md-12">
+					<button type="submit" name="addappointment-submit" id="addappointment-submit" tabindex="5" class="form-control btn btn-outline-primary btn-sm">Add</button>
+				</div>
+			</div>
+		</form>
+
+	</div>
+</div>
+{% endblock %}

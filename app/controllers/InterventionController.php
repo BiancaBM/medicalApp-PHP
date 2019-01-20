@@ -2,42 +2,38 @@
 
 namespace App\controllers;
 
-use \App\services\InterventionService;
-use \App\services\DatabaseConnection;
+use Framework\Controller;
+use App\Services\InterventionService;
 
-class InterventionController
+class InterventionController extends Controller
 {
-    private $pdo;
-
-    function __CONSTRUCT()
+    private $interventionInstance;
+    function __construct()
     {   
-        session_start();
+        parent::__construct();
         if(!isset($_SESSION["username"])) header("Location: /");
-        $databaseConnectionInstance = new DatabaseConnection(); 
-        $this->pdo = $databaseConnectionInstance->CreateDatabaseConnection();
+        $this->interventionInstance = new InterventionService();
     }
 
-    public function interventionAddPageAction(array $params, array $query) {
+    public function interventionAddPageAction() {
         if((isset($_SESSION['isAdmin']) && !$_SESSION['isAdmin'])){
             header('Location: /');
         }
 
-        include(__DIR__ . '\..\views\interventionaddpage.phtml');
+        return $this->view('interventionaddpage.html');
     }
 
-    public function interventionAddSaveAction(array $params, array $query) {
-        $interventionInstance = new InterventionService($this->pdo);
+    public function interventionAddSaveAction(array $params) {
         if(!isset($_SESSION["idUser"]) || (isset($_SESSION['isAdmin']) && !$_SESSION['isAdmin'])) {
             header('Location: /notfound');
         }
 
-        $added = $interventionInstance->addIntervention($params["name"], $params["price"]);
+        $this->interventionInstance->addIntervention($params["name"], $params["price"]);
         // /intervention/add/save
     }
 
-    public function interventionRemoveAction(array $params, array $query) {
-        $interventionInstance = new InterventionService($this->pdo);
-        $interventionInstance->removeIntervention($params["idIntervention"]);
+    public function interventionRemoveAction(array $params) {
+        $this->interventionInstance->removeIntervention($params["idIntervention"]);
         // /intervention/remove
     }
 }

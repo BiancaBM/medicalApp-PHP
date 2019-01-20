@@ -1,19 +1,17 @@
 <?php
 
-namespace App\services;
+namespace App\Services;
 
-use PDO;
+use App\Models\User;
 
 class AuthService { 
     private $username;
     private $password;
-    private $pdo;
 
-    function __CONSTRUCT(string $username, string $password, PDO $pdo)
+    function __construct(string $username, string $password)
     {
         $this->username = $username;
         $this->password = $password;
-        $this->pdo = $pdo;
     }
 
     function initializeSession(array $result)
@@ -30,10 +28,7 @@ class AuthService {
 
     function authenticateUser()
     {
-        $sql="SELECT * FROM users WHERE username = (?)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$this->username]);
-        $result = $stmt->fetch();
+        $result = (new User)->getBy("username", $this->username);
 
         if($result)
         {
@@ -54,7 +49,8 @@ class AuthService {
         }
         else
         {
-            $_SESSION["generalMsg"] = "The username or password is wrong!";
+            $_SESSION["generalMsg"] = "The username or password is wrong!"."___TIMESTAMP___".time();
+            $_SESSION["isErrorMessage"] = true;
             header("Location: /login");
         }
     }
