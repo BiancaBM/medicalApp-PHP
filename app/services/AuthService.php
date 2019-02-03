@@ -3,15 +3,18 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Services\MessageService;
 
 class AuthService { 
     private $username;
     private $password;
+    private $messageInstance;
 
     function __construct(string $username, string $password)
     {
         $this->username = $username;
         $this->password = $password;
+        $this->messageInstance = new MessageService();
     }
 
     function initializeSession(array $result)
@@ -49,8 +52,7 @@ class AuthService {
         }
         else
         {
-            $_SESSION["generalMsg"] = "The username or password is wrong!"."___TIMESTAMP___".time();
-            $_SESSION["isErrorMessage"] = true;
+            $this->messageInstance->setGeneralMsgInSession("The username or password is wrong!", true);
             header("Location: /login");
         }
     }

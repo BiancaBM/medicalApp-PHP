@@ -6,7 +6,7 @@ use App\config;
 abstract class Model
 {
     protected $table;
-    public function newDbCon($resultAsArray = false)
+    public function newDbCon()
     {
         $dsn = Config::DB['driver'];
         $dsn .= ":host=".Config::DB['host'];
@@ -17,10 +17,7 @@ abstract class Model
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
-        //by default the result from database will be an object but if specified it can be changed to an associative array / matrix
-        if ($resultAsArray) {
-            $options[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
-        }
+
         try {
             return new PDO($dsn, Config::DB['user'], Config::DB['pass'], $options);
         } catch (PDOException $e) {

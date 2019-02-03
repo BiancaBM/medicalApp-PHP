@@ -16,7 +16,6 @@
                     $(function() {
                         const previousMsg = localStorage.getItem('previousMsg');
                         const generalMsg = "{{session.generalMsg}}";
-                        console.log('p: ', previousMsg, '___s: ', generalMsg);
 
                        if(!previousMsg || previousMsg != generalMsg || !generalMsg) {
                             $('#generalMsg').html(generalMsg.split('___TIMESTAMP___')[0]);

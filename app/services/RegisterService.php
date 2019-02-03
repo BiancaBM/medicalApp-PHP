@@ -11,7 +11,7 @@ class RegisterService
     private $password;
     private $cnp;
 
-    function __CONSTRUCT(string $username, string $password, string $cnp)
+    function __construct(string $username, string $password, string $cnp)
     {
         $this->username = $username;
         $this->password = $password;
@@ -23,11 +23,7 @@ class RegisterService
         $usernameExist = (new User)->getBy('username', $this->username);
         $cnpExist = (new User)->getBy('cnp', $this->cnp);
 
-        if ($usernameExist || $cnpExist) {
-            return true;
-        }
-
-        return false;
+        return $usernameExist || $cnpExist;
     }
 
     function registerUserInDb()

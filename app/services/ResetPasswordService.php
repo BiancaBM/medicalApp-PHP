@@ -3,11 +3,14 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Services\MessageService;
 
 class ResetPasswordService { 
 
-    function __CONSTRUCT()
-    {
+    private $messageInstance;
+
+    function __construct() {
+        $this->messageInstance = new MessageService();
     }
 
     function resetPassword(string $password = null, string $confirm_password = null)
@@ -19,8 +22,7 @@ class ResetPasswordService {
             $where = ['idUser' => $_SESSION["idUser"]];
             (new User)->update($where, $data);
             
-            $_SESSION["generalMsg"] = "Password has been reset successfully!"."___TIMESTAMP___".time();
-            $_SESSION["isErrorMessage"] = false;
+            $this->messageInstance->setGeneralMsgInSession("Password has been reset successfully!", false);
             return TRUE;
         }
 

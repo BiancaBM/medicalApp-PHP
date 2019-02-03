@@ -9,10 +9,12 @@ use Framework\Controller;
 class PatientController extends Controller
 {
     private $patientInstance;
+
     function __construct()
     {   
         parent::__construct();
         $this->patientInstance = new PatientService();
+
         if(!isset($_SESSION["username"])) header("Location: /");
     }
     

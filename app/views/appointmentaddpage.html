@@ -23,7 +23,7 @@
 				<label for="selectedPatient">Patient</label>
 				<select class="form-control" name="selectedPatient" id="patientSelector" required tabindex="1">
 					<option {% if not session.addedAppointment %} selected {% endif %} value="">Select a patient...</option>
-					{% for option in session.patients %}
+					{% for option in patients %}
 						<option {% if session.addedAppointment.selectedPatient == option.idPatient %} selected {% endif %} value="{{option.idPatient}}">{{"#{option.lastName} #{option.firstName} | CNP: #{option.CNP}"}}</option>
 					{% endfor %}
 				</select>

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Services\MessageService;
 use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\AppointmentIntervention;
@@ -9,8 +10,10 @@ use App\Models\Intervention;
 
 class AppointmentService { 
 
-    function __CONSTRUCT()
-    {
+    private $messageInstance;
+
+    function __construct() {
+        $this->messageInstance = new MessageService();
     }
 
     function getAppointments()
@@ -27,7 +30,7 @@ class AppointmentService {
             }
         }
         
-        $_SESSION["appointments"]=$appointments;
+        return $appointments;
     }
 
     function fillPatientName(&$appointment) {
@@ -65,8 +68,8 @@ class AppointmentService {
         
         (new Appointment)->deleteBy('idAppointment', $idAppointment);
 
-        $_SESSION["generalMsg"] = "Selected appointment was successfully removed!"."___TIMESTAMP___".time();
-        $_SESSION["isErrorMessage"] = false;
+        $this->messageInstance->setGeneralMsgInSession("Selected appointment was successfully removed!", false);
+
         header('Location: /');
     }
 
@@ -80,41 +83,19 @@ class AppointmentService {
             header('Location: /notfound');
         }
 
-        if(!$this->isIntervalAvailable($startDate, $endDate)){
-            $_SESSION["generalMsg"] = "Dates conflict! Please change it!"."___TIMESTAMP___".time();
-            $_SESSION["isErrorMessage"] = true;
+        if(!(new Appointment)->isIntervalAvailable($startDate, $endDate)){
+            $this->messageInstance->setGeneralMsgInSession("Dates conflict! Please change it!", true);
             return FALSE;
         }     
-        else 
-        {
-            $itemToInsert = ['startDate' => $startDate, 'endDate' => $endDate, 'idPatient' => $selectedPatientId, 'idUser' => $_SESSION['idUser']];
-            $insertedAppointmentId = (new Appointment)->insert($itemToInsert);
-
-            if($insertedAppointmentId != null && $selectedInterventions != null && count($selectedInterventions) > 0){
-                $this->createIntervetionsAppointmentsLinks($insertedAppointmentId, $selectedInterventions);
-            }
-
-            $_SESSION["generalMsg"] = "Appointment successfully added!"."___TIMESTAMP___".time();
-            $_SESSION["isErrorMessage"] = false;
-        } 
         
-        return TRUE;
-    }
+        $itemToInsert = ['startDate' => $startDate, 'endDate' => $endDate, 'idPatient' => $selectedPatientId, 'idUser' => $_SESSION['idUser']];
+        $insertedAppointmentId = (new Appointment)->insert($itemToInsert);
 
-    function isIntervalAvailable(string $startDate, string $endDate) {
-        $sql = "SELECT * FROM `appointments` WHERE (startDate >= (?) AND startDate <= (?)) OR (endDate >= (?) AND endDate <= (?))"; // check to not include other intervals inside of it
-        $sql.= "OR ((?) >= startDate && (?) <= endDate) OR ((?) >= startDate && (?) <= endDate)"; // check that selected interval is not inside of another intervals
-        $params = [
-            $startDate,$endDate,$startDate,$endDate,
-            $startDate, $startDate, $endDate, $endDate
-        ];
-        
-        $result = (new Appointment)->runScript($sql, $params);
-
-        if(count($result) > 0) {
-            return FALSE;
+        if($insertedAppointmentId != null && $selectedInterventions != null && count($selectedInterventions) > 0){
+            $this->createIntervetionsAppointmentsLinks($insertedAppointmentId, $selectedInterventions);
         }
-
+        
+        $this->messageInstance->setGeneralMsgInSession("Appointment successfully added!", false);
         return TRUE;
     }
 

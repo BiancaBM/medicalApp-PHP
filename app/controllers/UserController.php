@@ -13,10 +13,22 @@ use App\Services\ResetPasswordService;
 class UserController extends Controller
 {
     private $userInstance;
+    private $interventionInstance;
+    private $doctorInstance;
+    private $patientInstance;
+    private $appointmentsInstance;
+    private $resetPasswordInstance;
+
     function __construct()
     {
         parent::__construct();
         $this->userInstance = new UserService();
+        $this->interventionInstance = new InterventionService();
+        $this->doctorInstance = new DoctorService();
+        $this->patientInstance = new PatientService();
+        $this->appointmentsInstance = new AppointmentService();
+        $this->resetPasswordInstance = new ResetPasswordService();
+
         if(!isset($_SESSION["username"])) header("Location: /login");
     }
 
@@ -37,15 +49,9 @@ class UserController extends Controller
         {
             header("Location: /");
         }
-
-        $doctorInstance = new DoctorService();
-        $doctorInstance->getDoctors();
-
-        $interventionInstance = new InterventionService();
-        $interventionInstance->getInterventions();
-
-        $doctors = $_SESSION["doctors"];
-        $interventions = $_SESSION["interventions"];
+        
+        $doctors = $this->doctorInstance->getDoctors();
+        $interventions = $this->interventionInstance->getInterventions();
 
         return $this->view('adminpage.html', ["doctors" => $doctors, "interventions" => $interventions]);
        // /admin
@@ -60,14 +66,8 @@ class UserController extends Controller
         unset($_SESSION["addedPatient"]);
         unset($_SESSION["addedAppointment"]);
 
-        $patientInstance = new PatientService();
-        $patientInstance->getPatients();
-
-        $appointmentsInstance = new AppointmentService();
-        $appointmentsInstance->getAppointments();
-
-        $patients = $_SESSION["patients"];
-        $appointments = $_SESSION["appointments"];
+        $patients = $this->patientInstance->getPatients();
+        $appointments = $this->appointmentsInstance->getAppointments();
 
         return $this->view('doctorpage.html', ["patients" => $patients, "appointments" => $appointments]);
         // /doctor
@@ -96,8 +96,7 @@ class UserController extends Controller
     }
 
     public function resetPasswordAction(array $params) {
-        $resetPasswordInstance = new ResetPasswordService();
-        $reseted = $resetPasswordInstance->resetPassword($params["password"],$params["confirm_password"]);
+        $reseted = $this->resetPasswordInstance->resetPassword($params["password"],$params["confirm_password"]);
 
         if($reseted) {
             header("Location: /user/edit");

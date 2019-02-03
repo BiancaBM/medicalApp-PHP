@@ -5,14 +5,21 @@ namespace App\controllers;
 use Framework\Controller;
 use App\Services\InterventionService;
 use App\Services\AppointmentService;
+use App\Services\PatientService;
 
 class AppointmentController extends Controller
 {
     private $appointmentInstance;
+    private $interventionInstance;
+    private $patientInstance;
+
     function __construct()
     {   
         parent::__construct();
         $this->appointmentInstance = new AppointmentService();
+        $this->interventionInstance = new InterventionService();
+        $this->patientInstance = new PatientService();
+
         if(!isset($_SESSION["username"])) header("Location: /");
     }
 
@@ -22,11 +29,10 @@ class AppointmentController extends Controller
             header('Location: /');
         }
 
-        $interventionInstance = new InterventionService();
-        $interventionInstance->getInterventions();
+        $patients = $this->patientInstance->getPatients();
+        $interventions = $this->interventionInstance->getInterventions();
         
-        $interventions = $_SESSION["interventions"];
-        return $this->view('appointmentaddpage.html', ["interventions" => $interventions]);
+        return $this->view('appointmentaddpage.html', ["interventions" => $interventions, "patients" => $patients]);
     }
 
     public function appointmentAddSaveAction(array $params) {
